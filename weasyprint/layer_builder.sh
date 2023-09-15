@@ -6,15 +6,15 @@ set -e
 yum install -y yum-utils rpmdevtools
 cd /tmp
 yumdownloader --resolve \
-    cairo.x86_64 \
-    gdk-pixbuf2.x86_64 \
-    libffi.x86_64 \
-    pango.x86_64 \
-    expat.x86_64 \
-    libmount.x86_64 \
-    libuuid.x86_64 \
-    libblkid.x86_64 \
-    glib2.x86_64 \
+    cairo.aarch64 \
+    gdk-pixbuf2.aarch64 \
+    libffi.aarch64 \
+    pango.aarch64 \
+    expat.aarch64 \
+    libmount.aarch64 \
+    libuuid.aarch64 \
+    libblkid.aarch64 \
+    glib2.aarch64 \
 
 rpmdev-extract -- *rpm
 
