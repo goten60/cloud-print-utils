@@ -14,7 +14,6 @@ build/xmlsec-layer-$(RUNTIME).zip: xmlsec/layer_builder.sh \
 	    bash /out/layer_builder.sh
 	mv -f ./xmlsec/layer.zip ./build/xmlsec-no-fonts-layer.zip
 	cd build && rm -rf ./opt && mkdir opt \
-	    && unzip fonts-layer.zip -d opt \
 	    && unzip xmlsec-no-fonts-layer.zip -d opt \
 	    && cd opt && zip -r9 ../xmlsec-layer-${RUNTIME}.zip .
 
