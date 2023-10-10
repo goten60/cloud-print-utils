@@ -1,6 +1,6 @@
 RUNTIME ?= python3.8
 TEST_FILENAME ?= report.pdf
-DOCKER_RUN = docker run --rm --platform linux/arm64
+DOCKER_RUN = docker run --rm --platform linux/x86_64 
 
 .PHONY: stack.deploy.weasyprint clean test.weasyprint
 
