@@ -7,7 +7,8 @@ yum install -y yum-utils rpmdevtools
 cd /tmp
 yumdownloader --resolve \
     libtool-ltdl.x86_64 \
-    libxslt.x86_64
+    libxslt.x86_64 \
+    libxml2.x86_64
 
 rpmdev-extract -- *rpm
 
