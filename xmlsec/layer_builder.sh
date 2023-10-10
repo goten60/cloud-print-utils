@@ -22,8 +22,6 @@ cp `rpm -ql xmlsec1 | grep "libxmlsec1.so.1$"` "/opt/lib/"
 cp `rpm -ql xmlsec1 | grep "libxmlsec1.so.1$"` "/opt/python/lib/"
 cp `rpm -ql xmlsec1-openssl | grep "libxmlsec1-openssl.so$"` "/opt/lib/"
 cp `rpm -ql xmlsec1-openssl | grep "libxmlsec1-openssl.so$"` "/opt/python/lib/"
-cp `rpm -ql xmlsec1-openssl | grep "libltdl.so$"` "/opt/lib/"
-cp `rpm -ql libtool | grep "libltdl.so$"` "/opt/python/lib/"
 
 cd /opt
 zip -r9 /out/layer.zip lib/* python/*
