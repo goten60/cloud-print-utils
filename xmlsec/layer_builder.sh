@@ -10,7 +10,9 @@ mkdir -p "/opt/lib"
 python3 -m pip install xmlsec -t "/opt/python/lib/python3.11/site-packages"
 
 cp `rpm -ql xmlsec1 | grep "libxmlsec1.so.1$"` "/opt/lib/"
+cp `rpm -ql xmlsec1 | grep "libxmlsec1.so.1$"` "/opt/python/lib/"
 cp `rpm -ql xmlsec1-openssl | grep "libxmlsec1-openssl.so$"` "/opt/lib/"
+cp `rpm -ql xmlsec1-openssl | grep "libxmlsec1-openssl.so$"` "/opt/python/lib/"
 
 cd /opt
 zip -r9 /out/layer.zip lib/* python/*
