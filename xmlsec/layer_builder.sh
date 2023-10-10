@@ -12,7 +12,7 @@ rpmdev-extract -- *rpm
 mkdir -p "/opt/python/lib/python3.11/site-packages"
 mkdir -p "/opt/lib"
 
-cp -P -r /tmp/*/usr/lib64/* /opt/python/lib/
+cp -P -r /tmp/*/usr/lib64/* /opt/python/lib
 
 yum -y install libxml2-devel xmlsec1-devel xmlsec1-openssl-devel libtool-ltdl-devel gcc
 
