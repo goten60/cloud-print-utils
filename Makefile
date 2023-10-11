@@ -13,6 +13,7 @@ build/xmlsec-layer-$(RUNTIME).zip: xmlsec/layer_builder.sh \
 	    -t public.ecr.aws/sam/build-${RUNTIME}:latest \
 	    bash /out/layer_builder.sh
 	mv -f ./xmlsec/layer.zip ./build/xmlsec-layer-${RUNTIME}.zip
+	aws s3 cp build/xmlsec-layer-${RUNTIME}.zip s3://bpc-ec2-shared-bucket-ohio/layers/xmlsec-layer-${RUNTIME}.zip --region=us-east-2
 
 build/weasyprint-layer-$(RUNTIME).zip: weasyprint/layer_builder.sh \
     build/fonts-layer.zip \
