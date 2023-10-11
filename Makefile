@@ -1,8 +1,8 @@
-RUNTIME ?= python3.8
+RUNTIME ?= python3.11
 TEST_FILENAME ?= report.pdf
 DOCKER_RUN = docker run --rm --platform linux/x86_64 
 
-.PHONY: stack.deploy.weasyprint clean test.weasyprint
+.PHONY: clean 
 
 all: build/weasyprint-layer-$(RUNTIME).zip build/wkhtmltopdf-layer.zip
 
@@ -12,10 +12,7 @@ build/xmlsec-layer-$(RUNTIME).zip: xmlsec/layer_builder.sh \
 	    -v `pwd`/xmlsec:/out \
 	    -t public.ecr.aws/sam/build-${RUNTIME}:latest \
 	    bash /out/layer_builder.sh
-	mv -f ./xmlsec/layer.zip ./build/xmlsec-no-fonts-layer.zip
-	cd build && rm -rf ./opt && mkdir opt \
-	    && unzip xmlsec-no-fonts-layer.zip -d opt \
-	    && cd opt && zip -r9 ../xmlsec-layer-${RUNTIME}.zip .
+	mv -f ./xmlsec/layer.zip ./build/xmlsec-layer-${RUNTIME}.zip
 
 build/weasyprint-layer-$(RUNTIME).zip: weasyprint/layer_builder.sh \
     build/fonts-layer.zip \
@@ -49,61 +46,6 @@ build/fonts-layer.zip: fonts/layer_builder.sh | _build
 	    -t public.ecr.aws/sam/build-${RUNTIME}:latest \
 	    bash /out/layer_builder.sh
 	mv -f ./fonts/layer.zip $@
-
-stack.diff:
-	cd cdk-stacks && npm install && npm run build
-	cdk diff --app ./cdk-stacks/bin/app.js --stack PrintStack --parameters uploadBucketName=${BUCKET}
-
-stack.deploy:
-	cd cdk-stacks && npm install && npm run build
-	cdk deploy --app ./cdk-stacks/bin/app.js --stack PrintStack --parameters uploadBucketName=${BUCKET}
-
-test.weasyprint:
-	${DOCKER_RUN} \
-	    -e GDK_PIXBUF_MODULE_FILE="/opt/lib/loaders.cache" \
-	    -e FONTCONFIG_PATH="/opt/fonts" \
-	    -e XDG_DATA_DIRS="/opt/lib" \
-	    -v `pwd`/weasyprint:/var/task \
-	    -v `pwd`/build/opt:/opt \
-	    lambci/lambda:${RUNTIME} \
-	    lambda_function.lambda_handler \
-	    '{"url": "https://weasyprint.org/samples/report/report.html", "filename": "${TEST_FILENAME}", "return": "base64"}' \
-	    | tail -1 | jq .body | tr -d '"' | base64 -d > ${TEST_FILENAME}
-	@echo "Check ./${TEST_FILENAME}, eg.: xdg-open ${TEST_FILENAME}"
-
-
-build/wkhtmltox-layer.zip: wkhtmltox/layer_builder.sh \
-    build/fonts-layer.zip \
-    | _build
-	${DOCKER_RUN} \
-	    -v `pwd`/wkhtmltox:/out \
-	    -t public.ecr.aws/sam/build-${RUNTIME}:latest \
-	    bash /out/layer_builder.sh
-	mv -f ./wkhtmltox/layer.zip ./build/wkhtmltox-no-fonts-layer.zip
-	cd build && rm -rf ./opt && mkdir opt \
-	    && unzip fonts-layer.zip -d opt \
-	    && unzip wkhtmltox-no-fonts-layer.zip -d opt \
-	    && cd opt && zip -r9 ../wkhtmltox-layer.zip .
-
-build/wkhtmltopdf-layer.zip: build/wkhtmltox-layer.zip
-	cp build/wkhtmltox-layer.zip $@
-	zip -d $@ "bin/wkhtmltoimage"
-
-build/wkhtmltoimage-layer.zip: build/wkhtmltox-layer.zip
-	cp build/wkhtmltox-layer.zip $@
-	zip -d $@ "bin/wkhtmltopdf"
-
-test.wkhtmltox:
-	${DOCKER_RUN} \
-	    -e FONTCONFIG_PATH="/opt/fonts" \
-	    -v `pwd`/wkhtmltox:/var/task \
-	    -v `pwd`/build/opt:/opt \
-	    lambci/lambda:${RUNTIME} \
-	    lambda_function.lambda_handler \
-	    '{"args": "https://google.com", "filename": "${TEST_FILENAME}", "return": "base64"}' \
-	    | tail -1 | jq .body | tr -d '"' | base64 -d > ${TEST_FILENAME}
-	@echo "Check ./${TEST_FILENAME}, eg.: xdg-open ${TEST_FILENAME}"
-
 
 _build:
 	@mkdir -p build
