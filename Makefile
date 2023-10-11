@@ -34,11 +34,7 @@ build/pandas-layer-$(RUNTIME).zip: pandas/layer_builder.sh \
 	    -v `pwd`/pandas:/out \
 	    -t public.ecr.aws/sam/build-${RUNTIME}:latest \
 	    bash /out/layer_builder.sh
-	mv -f ./pandas/layer.zip ./build/pandas-no-fonts-layer.zip
-	cd build && rm -rf ./opt && mkdir opt \
-	    && unzip fonts-layer.zip -d opt \
-	    && unzip pandas-no-fonts-layer.zip -d opt \
-	    && cd opt && zip -r9 ../pandas-layer-${RUNTIME}.zip .
+	mv -f ./pandas/layer.zip ./build/pandas-layer-${RUNTIME}.zip
 
 build/fonts-layer.zip: fonts/layer_builder.sh | _build
 	${DOCKER_RUN} \
